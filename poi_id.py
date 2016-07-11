@@ -5,6 +5,8 @@ import pickle
 sys.path.append("tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
+from summary import summary
+from outliers import scatterplot,findTopOutliersPair, findTopOutliersKey
 from tester import dump_classifier_and_data
 
 ### Task 1: Select what features you'll use.
@@ -15,8 +17,19 @@ features_list = ['poi','salary'] # You will need to use more features
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
+    
+summary(data_dict)
 
 ### Task 2: Remove outliers
+features = ["salary", "bonus"]
+data = featureFormat(data_dict, features)
+#scatterplot(data)
+outliers = findTopOutliersPair(data, N=5)
+print "Top outlier: ", outliers
+for n in reversed(range(0,len(outliers))):
+    print "Outlier key: ", findTopOutliersKey(data_dict, features[0], outliers[n][0])
+data_dict.pop( 'TOTAL', 0 )
+
 ### Task 3: Create new feature(s)
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
