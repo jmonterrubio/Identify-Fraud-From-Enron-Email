@@ -16,108 +16,108 @@ POI label: [‘poi’] (boolean, represented as integer)
 
 ## Investigation process
 
-### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it.
+1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it.
 
-The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. A small summary of it is:
+  The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. A small summary of it is:
 
-```
-Total number of datapoints:  146
-Total number of features:  21
-Summary features:  {'salary': 95, 'to_messages': 86, 'deferral_payments': 39, 'total_payments': 125, 'loan_advances': 4, 'bonus': 82, 'email_address': 111, 'restricted_stock_deferred': 18, 'total_stock_value': 126, 'shared_receipt_with_poi': 86, 'long_term_incentive': 66, 'exercised_stock_options': 102, 'from_messages': 86, 'other': 93, 'from_poi_to_this_person': 86, 'from_this_person_to_poi': 86, 'poi': 146, 'deferred_income': 49, 'expenses': 95, 'restricted_stock': 110, 'director_fees': 17}
-Label class poi:  {False: 128, True: 18}
-```
+  ```
+  Total number of datapoints:  146
+  Total number of features:  21
+  Summary features:  {'salary': 95, 'to_messages': 86, 'deferral_payments': 39, 'total_payments': 125, 'loan_advances': 4, 'bonus': 82, 'email_address': 111, 'restricted_stock_deferred': 18, 'total_stock_value': 126, 'shared_receipt_with_poi': 86, 'long_term_incentive': 66, 'exercised_stock_options': 102, 'from_messages': 86, 'other': 93, 'from_poi_to_this_person': 86, 'from_this_person_to_poi': 86, 'poi': 146, 'deferred_income': 49, 'expenses': 95, 'restricted_stock': 110, 'director_fees': 17}
+  Label class poi:  {False: 128, True: 18}
+  ```
 
-I can see an outlier plotting the features `salary` and `bonus`. There's a big difference with the next high value and obtaining the name (key) of the datapoint that has those values, I see why these high values. It's the `TOTAL` aggregate of them so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
+  I can see an outlier plotting the features `salary` and `bonus`. There's a big difference with the next high value and obtaining the name (key) of the datapoint that has those values, I see why these high values. It's the `TOTAL` aggregate of them so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
 
-### What features did you end up using in your POI identifier, and what selection process did you use to pick them?
+2. What features did you end up using in your POI identifier, and what selection process did you use to pick them?
 
-#### Create new features
+  1. Create new features
 
-According to the course recommendations I create two new features:
+    According to the course recommendations I create two new features:
 
-* `fraction_from_poi`
+    * `fraction_from_poi`
 
-    Is the fraction of emails that a person receive from POIs of the total received.
+        Is the fraction of emails that a person receive from POIs of the total received.
 
-* `fraction_to_poi`
+    * `fraction_to_poi`
 
-    Is the fraction of emails that a person send to POIs of the total sended.
+        Is the fraction of emails that a person send to POIs of the total sended.
 
-Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary ratio).
+    Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary ratio).
 
-* `fraction_bonus_salary`
+    * `fraction_bonus_salary`
 
-#### Features selected
+  2. Features selected
 
-After new features creation and classification algorithm selection (Decision Tree Classifier), I used *feature importance* method to select and pick the features that will help me in the search of POIs:
+    After new features creation and classification algorithm selection (Decision Tree Classifier), I used *feature importance* method to select and pick the features that will help me in the search of POIs:
 
-`exercised_stock_options`, `total_payments`, `fraction_to_poi`, `shared_receipt_with_poi`, `other`, `restricted_stock`, `fraction_from_poi`
+    `exercised_stock_options`, `total_payments`, `fraction_to_poi`, `shared_receipt_with_poi`, `other`, `restricted_stock`, `fraction_from_poi`
 
-```
-1. feature exercised_stock_options (0.331378)
-2. feature total_payments (0.142832)
-3. feature fraction_to_poi (0.127535)
-4. feature shared_receipt_with_poi (0.125238)
-5. feature other (0.122483)
-6. feature restricted_stock (0.080004)
-7. feature fraction_from_poi (0.070529)
-```
+    ```
+    1. feature exercised_stock_options (0.331378)
+    2. feature total_payments (0.142832)
+    3. feature fraction_to_poi (0.127535)
+    4. feature shared_receipt_with_poi (0.125238)
+    5. feature other (0.122483)
+    6. feature restricted_stock (0.080004)
+    7. feature fraction_from_poi (0.070529)
+    ```
 
-As we can see, two of the new features created (fraction_to_poi and fraction_from_poi) seems to be important in the search of POIs. The other ones that aren't in the list above won't give us any clue about them with 0 importance.
+    As we can see, two of the new features created (fraction_to_poi and fraction_from_poi) seems to be important in the search of POIs. The other ones that aren't in the list above won't give us any clue about them with 0 importance.
 
-### What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
+3.  What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
 
-Because we are handling a classification problem I tried with some of the most used algorithms (Naive Bayes, Support Vector Machine and Decision Tree) with resulting metrics:
+  Because we are handling a classification problem I tried with some of the most used algorithms (Naive Bayes, Support Vector Machine and Decision Tree) with resulting metrics:
 
-```
-GaussianNB()
-	Accuracy: 0.73213	Precision: 0.23405	Recall: 0.44400	F1: 0.30652	F2: 0.37646
-	Total predictions: 15000	True positives:  888	False positives: 2906	False negatives: 1112	True negatives: 10094
+  ```
+  GaussianNB()
+  	Accuracy: 0.73213	Precision: 0.23405	Recall: 0.44400	F1: 0.30652	F2: 0.37646
+  	Total predictions: 15000	True positives:  888	False positives: 2906	False negatives: 1112	True negatives: 10094
 
-Got a divide by zero when trying out: SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-  decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
-  max_iter=-1, probability=False, random_state=None, shrinking=True,
-  tol=0.001, verbose=False)
-Precision or recall may be undefined due to a lack of true positive predicitons.
-DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
-            max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
-            min_samples_split=2, min_weight_fraction_leaf=0.0,
-            presort=False, random_state=None, splitter='best')
-	Accuracy: 0.82467	Precision: 0.33729	Recall: 0.32650	F1: 0.33181	F2: 0.32860
-	Total predictions: 15000	True positives:  653	False positives: 1283	False negatives: 1347	True negatives: 11717
-```
-So due to a better performance (see the difference in Accuracy and Precission/Recall tradeoff) and the lack of information of SVM I ended up using **Decision Tree Classifier**.
+  Got a divide by zero when trying out: SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
+    max_iter=-1, probability=False, random_state=None, shrinking=True,
+    tol=0.001, verbose=False)
+  Precision or recall may be undefined due to a lack of true positive predicitons.
+  DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+              max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
+              min_samples_split=2, min_weight_fraction_leaf=0.0,
+              presort=False, random_state=None, splitter='best')
+  	Accuracy: 0.82467	Precision: 0.33729	Recall: 0.32650	F1: 0.33181	F2: 0.32860
+  	Total predictions: 15000	True positives:  653	False positives: 1283	False negatives: 1347	True negatives: 11717
+  ```
+  So due to a better performance (see the difference in Accuracy and Precission/Recall tradeoff) and the lack of information of SVM I ended up using **Decision Tree Classifier**.
 
-### What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm?
+4. What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm?
 
-The behaviour/results of an algorithm can be modified changing the value of the parameters. The idea is to tune the parameters of the algorithm to obtain better results. Each dataset is different and the algorithm parameters try to perform the best for each one.
+  The behaviour/results of an algorithm can be modified changing the value of the parameters. The idea is to tune the parameters of the algorithm to obtain better results. Each dataset is different and the algorithm parameters try to perform the best for each one.
 
-To obtain the better values of the parameters of the Decision Tree Classifier I used GridSearchCV obtaining some parameters for the Decision Tree Clasiffier that increase all the metrics used to qualify the algorithm.
+  To obtain the better values of the parameters of the Decision Tree Classifier I used GridSearchCV obtaining some parameters for the Decision Tree Clasiffier that increase all the metrics used to qualify the algorithm.
 
-### What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
+5. What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
 
-If you test a model on same data as used for training the learner, the model may appear to make overly accurate predictions. This is an example of overfitting. To reliably estimate the predictive power of a model, it should be tested on data that hasn't been used for training the learner. Cross validation lets you use all examples for both learning and testing without ever using the same sample for both training and testing.
+  If you test a model on same data as used for training the learner, the model may appear to make overly accurate predictions. This is an example of overfitting. To reliably estimate the predictive power of a model, it should be tested on data that hasn't been used for training the learner. Cross validation lets you use all examples for both learning and testing without ever using the same sample for both training and testing.
 
-The way I'm validating the analysis is with the function `test_classifier` defined in the `tester.py`  script provided by the tools folder of the starter code. This script uses *stratified shuffle split cross validation*.
+  The way I'm validating the analysis is with the function `test_classifier` defined in the `tester.py`  script provided by the tools folder of the starter code. This script uses *stratified shuffle split cross validation*.
 
-### Give at least 2 evaluation metrics and your average performance for each of them. Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance.
+6. Give at least 2 evaluation metrics and your average performance for each of them. Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance.
 
-The metrics used to evaluate the performance of the algorithm are **Precision** and **Recall**. In our problem these metrics are better than accuracy to evaluate the performance because of the content of the dataset. We have a very skewed classes (labels) and the accuracy metric is not the ideal one. The final results of the metrics are:
+  The metrics used to evaluate the performance of the algorithm are **Precision** and **Recall**. In our problem these metrics are better than accuracy to evaluate the performance because of the content of the dataset. We have a very skewed classes (labels) and the accuracy metric is not the ideal one. The final results of the metrics are:
 
-|Metric|Result|
-|:|:|
-|Accuracy|0.87600|
-|*Precision*|*0.54113*|
-|*Recall*|*0.46050*|
-|F1|0.49757|
-|F2|0.47464|
-|Total predictions|15000|
-|True positives|921|
-|False positives|781|
-|False negatives|1079|
-|True negatives|12219|
+  Metric | Result
+  --- | ---
+  Accuracy | 0.87600
+  `Precision` | **0.54113**
+  `Recall` | **0.46050**
+  F1 | 0.49757
+  F2 | 0.47464
+  Total predictions | 15000
+  True positives | 921
+  False positives | 781
+  False negatives | 1079
+  True negatives | 12219
 
-In this case, the values of precision and recall means that a 46% of the real POIs are detected and a 54% of the detected POIs is really true.
+  In this case, the values of precision and recall means that a 46% of the real POIs are detected and a 54% of the detected POIs is really true.
 
 ## Bibliography
 
