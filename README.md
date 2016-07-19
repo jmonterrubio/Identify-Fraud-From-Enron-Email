@@ -27,11 +27,72 @@ Summary features:  {'salary': 95, 'to_messages': 86, 'deferral_payments': 39, 't
 Label class poi:  {False: 128, True: 18}
 ```
 
-### What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.
+I can see an outlier plotting the features salary and bonus. There's a big difference with the next high value and obtaining the name of the datapoint that has those values, i see why these high values. It's the `TOTAL` aggregate of them so in this case i can remove the outlier because it don't have any value. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
+
+### What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it.
+
+#### Create new features
+
+According to the course recommendations I create two new features:
+
+* `fraction_from_poi`
+
+    Is the fraction of emails that a person receive from POIs of the total received.
+
+* `fraction_to_poi`
+
+    Is the fraction of emails that a person send to POIs of the total sended.
+
+Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary).
+
+* `fraction_bonus_salary`
+
+#### Features selected
+
+After new features creation and classification algorithm selection (Decision Tree Classifier), I used *feature importance* method to select and pick the features that will help me in the search of POIs
+
+`exercised_stock_options`, `total_payments`, `fraction_to_poi`, `shared_receipt_with_poi`, `other`, `restricted_stock`, `fraction_from_poi`
+
+```
+1. feature exercised_stock_options (0.331378)
+2. feature total_payments (0.142832)
+3. feature fraction_to_poi (0.127535)
+4. feature shared_receipt_with_poi (0.125238)
+5. feature other (0.122483)
+6. feature restricted_stock (0.080004)
+7. feature fraction_from_poi (0.070529)
+```
+
+As we can see, two of the new features created (fraction_to_poi and fraction_from_poi) seems to be important in the search of POIs. The other ones won't give us any clue about them with 0 importance.
 
 ### What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
 
+Because we are handling a classification problem I tried with some of the most used algorithms (Naive Bayes, Support Vector Machine and Decision Tree) with resulting metrics:
+
+```
+GaussianNB()
+	Accuracy: 0.73213	Precision: 0.23405	Recall: 0.44400	F1: 0.30652	F2: 0.37646
+	Total predictions: 15000	True positives:  888	False positives: 2906	False negatives: 1112	True negatives: 10094
+
+Got a divide by zero when trying out: SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+  decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
+  max_iter=-1, probability=False, random_state=None, shrinking=True,
+  tol=0.001, verbose=False)
+Precision or recall may be undefined due to a lack of true positive predicitons.
+DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=None, splitter='best')
+	Accuracy: 0.82467	Precision: 0.33729	Recall: 0.32650	F1: 0.33181	F2: 0.32860
+	Total predictions: 15000	True positives:  653	False positives: 1283	False negatives: 1347	True negatives: 11717
+```
+So due to a better performance and the lack of information of SVM I ended up using **Decision Tree Classifier**.
+
 ### What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm?
+
+The behaviour/results of an algorithm can be modified changing the value of the parameters. The idea is to tune the parameters of the algorithm to obtain better results. Each dataset is different and the algorithm parameters try to perform the best for each one.
+
+To obtain the better values of the parameters of the Decision Tree Classifier I used GridSearchCV.
 
 ### What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
 
