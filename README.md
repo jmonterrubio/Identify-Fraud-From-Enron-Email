@@ -16,9 +16,9 @@ POI label: [‘poi’] (boolean, represented as integer)
 
 ## Investigation process
 
-### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?
+### Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it.
 
-The goal of this project is try to find POI given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a person is or not a POI. To create this algorithm I start with some training data. A small summary of it is:
+The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. A small summary of it is:
 
 ```
 Total number of datapoints:  146
@@ -27,9 +27,9 @@ Summary features:  {'salary': 95, 'to_messages': 86, 'deferral_payments': 39, 't
 Label class poi:  {False: 128, True: 18}
 ```
 
-I can see an outlier plotting the features salary and bonus. There's a big difference with the next high value and obtaining the name of the datapoint that has those values, i see why these high values. It's the `TOTAL` aggregate of them so in this case i can remove the outlier because it don't have any value. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
+I can see an outlier plotting the features `salary` and `bonus`. There's a big difference with the next high value and obtaining the name (key) of the datapoint that has those values, I see why these high values. It's the `TOTAL` aggregate of them so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
 
-### What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it.
+### What features did you end up using in your POI identifier, and what selection process did you use to pick them?
 
 #### Create new features
 
@@ -43,13 +43,13 @@ According to the course recommendations I create two new features:
 
     Is the fraction of emails that a person send to POIs of the total sended.
 
-Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary).
+Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary ratio).
 
 * `fraction_bonus_salary`
 
 #### Features selected
 
-After new features creation and classification algorithm selection (Decision Tree Classifier), I used *feature importance* method to select and pick the features that will help me in the search of POIs
+After new features creation and classification algorithm selection (Decision Tree Classifier), I used *feature importance* method to select and pick the features that will help me in the search of POIs:
 
 `exercised_stock_options`, `total_payments`, `fraction_to_poi`, `shared_receipt_with_poi`, `other`, `restricted_stock`, `fraction_from_poi`
 
@@ -63,7 +63,7 @@ After new features creation and classification algorithm selection (Decision Tre
 7. feature fraction_from_poi (0.070529)
 ```
 
-As we can see, two of the new features created (fraction_to_poi and fraction_from_poi) seems to be important in the search of POIs. The other ones won't give us any clue about them with 0 importance.
+As we can see, two of the new features created (fraction_to_poi and fraction_from_poi) seems to be important in the search of POIs. The other ones that aren't in the list above won't give us any clue about them with 0 importance.
 
 ### What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
 
@@ -86,14 +86,41 @@ DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
 	Accuracy: 0.82467	Precision: 0.33729	Recall: 0.32650	F1: 0.33181	F2: 0.32860
 	Total predictions: 15000	True positives:  653	False positives: 1283	False negatives: 1347	True negatives: 11717
 ```
-So due to a better performance and the lack of information of SVM I ended up using **Decision Tree Classifier**.
+So due to a better performance (see the difference in Accuracy and Precission/Recall tradeoff) and the lack of information of SVM I ended up using **Decision Tree Classifier**.
 
 ### What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm?
 
 The behaviour/results of an algorithm can be modified changing the value of the parameters. The idea is to tune the parameters of the algorithm to obtain better results. Each dataset is different and the algorithm parameters try to perform the best for each one.
 
-To obtain the better values of the parameters of the Decision Tree Classifier I used GridSearchCV.
+To obtain the better values of the parameters of the Decision Tree Classifier I used GridSearchCV obtaining some parameters for the Decision Tree Clasiffier that increase all the metrics used to qualify the algorithm.
 
 ### What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis?
 
+If you test a model on same data as used for training the learner, the model may appear to make overly accurate predictions. This is an example of overfitting. To reliably estimate the predictive power of a model, it should be tested on data that hasn't been used for training the learner. Cross validation lets you use all examples for both learning and testing without ever using the same sample for both training and testing.
+
+The way I'm validating the analysis is with the function `test_classifier` defined in the `tester.py`  script provided by the tools folder of the starter code. This script uses *stratified shuffle split cross validation*.
+
 ### Give at least 2 evaluation metrics and your average performance for each of them. Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance.
+
+The metrics used to evaluate the performance of the algorithm are **Precision** and **Recall**. In our problem these metrics are better than accuracy to evaluate the performance because of the content of the dataset. We have a very skewed classes (labels) and the accuracy metric is not the ideal one. The final results of the metrics are:
+
+|Metric|Result|
+|:|:|
+|Accuracy|0.87600|
+|*Precision*|*0.54113*|
+|*Recall*|*0.46050*|
+|F1|0.49757|
+|F2|0.47464|
+|Total predictions|15000|
+|True positives|921|
+|False positives|781|
+|False negatives|1079|
+|True negatives|12219|
+
+In this case, the values of precision and recall means that a 46% of the real POIs are detected and a 54% of the detected POIs is really true.
+
+## Bibliography
+
+  * Course materials from the [Intro to Machine Learning](https://www.udacity.com/course/intro-to-machine-learning--ud120) Udacity course.
+  * [Scikit learn documentation](http://scikit-learn.org/stable/)
+  * Cross-Validation Info (https://rapid-i.com/wiki/index.php?title=Cross-validation)
