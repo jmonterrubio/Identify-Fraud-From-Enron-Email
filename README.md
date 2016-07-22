@@ -26,7 +26,7 @@ POI label: [‘poi’] (boolean, represented as integer)
 
   1. Create new features
 
-    According to the course recommendations I create two new features:
+    According to the course recommendations I create two new features. They're created because it make sense that POIs send and receive more messages between them:
 
     * `fraction_from_poi`
 
@@ -36,7 +36,7 @@ POI label: [‘poi’] (boolean, represented as integer)
 
         Is the fraction of emails that a person send to POIs of the total sended.
 
-    Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary ratio).
+    Furthermore I created a new feature that is how much is the bonus according to his salary (bonus/salary ratio) that intuitively seems it may help in identifying POIs.
 
     * `fraction_bonus_salary`
 
