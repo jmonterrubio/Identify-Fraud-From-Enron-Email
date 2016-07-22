@@ -52,10 +52,16 @@ test_classifier(clf, my_dataset, features_list)
 """
 """
 from sklearn.svm import SVC
-clf = SVC()
-clf.fit(features, labels)
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+clf = Pipeline(steps=[
+                    ('scaler', StandardScaler()),
+                    ('classifier', SVC())
+                    ])
+clf.fit(features,labels)
 test_classifier(clf, my_dataset, features_list)
 """
+
 from sklearn import tree
 clf = tree.DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=4,
             max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
@@ -84,7 +90,7 @@ for f in range(len(indices)):
 # features_train, features_test, labels_train, labels_test = \
 #     train_test_split(features, labels, test_size=0.1, random_state=42)
 #     
-
+"""
 from sklearn import grid_search
 
 parameters = {
@@ -96,7 +102,7 @@ parameters = {
               }
 clf_p = grid_search.GridSearchCV(tree.DecisionTreeClassifier(), parameters).fit(features, labels)
 print 'Parameters: ',clf_p.best_estimator_
-
+"""
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure

@@ -18,7 +18,7 @@ POI label: [‘poi’] (boolean, represented as integer)
 
 1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it.
 
-  The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. There are 146 datapoints and 21 features. The label class is `poi` and I can see how unbalanced is the dataset with 128 non-POI values against just 18 POI. Not all the datapoints have all the features filled with values, and features like `loan_advances` and `director_fees` with 142 and 129 NaN values respectively seems they're not going to help up very much in the investigation process. 
+  The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. There are 146 datapoints and 21 features. The label class is `poi` and I can see how unbalanced is the dataset with 128 non-POI values against just 18 POI. Not all the datapoints have all the features filled with values, and features like `loan_advances` and `director_fees` with 142 and 129 NaN values respectively seems they're not going to help up very much in the investigation process.
 
   I can see an outlier plotting the features `salary` and `bonus`. The key behind those extreme values is `TOTAL` and consist of the aggregate of the values of each feature so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
 
@@ -67,11 +67,13 @@ POI label: [‘poi’] (boolean, represented as integer)
   	Accuracy: 0.73213	Precision: 0.23405	Recall: 0.44400	F1: 0.30652	F2: 0.37646
   	Total predictions: 15000	True positives:  888	False positives: 2906	False negatives: 1112	True negatives: 10094
 
-  Got a divide by zero when trying out: SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-    decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
-    max_iter=-1, probability=False, random_state=None, shrinking=True,
-    tol=0.001, verbose=False)
-  Precision or recall may be undefined due to a lack of true positive predicitons.
+  Pipeline(steps=[('scaler', StandardScaler(copy=True, with_mean=True, with_std=True)), ('classifier', SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+      decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
+      max_iter=-1, probability=False, random_state=None, shrinking=True,
+      tol=0.001, verbose=False))])
+    	Accuracy: 0.86747	Precision: 0.58333	Recall: 0.02100	F1: 0.04054	F2: 0.02602
+    	Total predictions: 15000	True positives:   42	False positives:   30	False negatives: 1958	True negatives: 12970
+
   DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
               max_features=None, max_leaf_nodes=None, min_samples_leaf=1,
               min_samples_split=2, min_weight_fraction_leaf=0.0,
@@ -79,7 +81,7 @@ POI label: [‘poi’] (boolean, represented as integer)
   	Accuracy: 0.82467	Precision: 0.33729	Recall: 0.32650	F1: 0.33181	F2: 0.32860
   	Total predictions: 15000	True positives:  653	False positives: 1283	False negatives: 1347	True negatives: 11717
   ```
-  So due to a better performance (see the difference in Accuracy and Precission/Recall tradeoff) and the lack of information of SVM I ended up using **Decision Tree Classifier**.
+  So due to a better performance in this case (see the difference in Accuracy and Precission/Recall tradeoff) I ended up using **Decision Tree Classifier**.
 
 4. What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm?
 
