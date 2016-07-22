@@ -18,16 +18,9 @@ POI label: [‘poi’] (boolean, represented as integer)
 
 1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it.
 
-  The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. A small summary of it is:
+  The goal of this project is try to find POIs given some public financial data and emails from the well known Enron scandal. To accomplish the objetive I'm going to use the benefits of machine learning obtaining an algorithm that classify, given some training data, if a someone is or not a POI. To create this algorithm I start with some training data. There are 146 datapoints and 21 features. The label class is `poi` and I can see how unbalanced is the dataset with 128 non-POI values against just 18 POI. Not all the datapoints have all the features filled with values, and features like `loan_advances` and `director_fees` with 142 and 129 NaN values respectively seems they're not going to help up very much in the investigation process. 
 
-  ```
-  Total number of datapoints:  146
-  Total number of features:  21
-  Summary features:  {'salary': 95, 'to_messages': 86, 'deferral_payments': 39, 'total_payments': 125, 'loan_advances': 4, 'bonus': 82, 'email_address': 111, 'restricted_stock_deferred': 18, 'total_stock_value': 126, 'shared_receipt_with_poi': 86, 'long_term_incentive': 66, 'exercised_stock_options': 102, 'from_messages': 86, 'other': 93, 'from_poi_to_this_person': 86, 'from_this_person_to_poi': 86, 'poi': 146, 'deferred_income': 49, 'expenses': 95, 'restricted_stock': 110, 'director_fees': 17}
-  Label class poi:  {False: 128, True: 18}
-  ```
-
-  I can see an outlier plotting the features `salary` and `bonus`. There's a big difference with the next high value and obtaining the name (key) of the datapoint that has those values, I see why these high values. It's the `TOTAL` aggregate of them so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
+  I can see an outlier plotting the features `salary` and `bonus`. The key behind those extreme values is `TOTAL` and consist of the aggregate of the values of each feature so in this case I can remove the outlier because it won't give us any benefit. The next high values are inside a 'logical' range so no more outliers are removed from the dataset.
 
 2. What features did you end up using in your POI identifier, and what selection process did you use to pick them?
 
